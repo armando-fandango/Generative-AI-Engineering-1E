@@ -25,3 +25,4 @@ services:
       - "8888"
     volumes: *data
     working_dir: /gen-ai
+    user: "ezdev"
