@@ -1,0 +1,27 @@
+# DUID="$(id -u)" DGID="$(id -g)" docker compose
+# docker compose run --service-ports --rm node
+version: "3.9"
+name: "gen-ai"
+x-data: &data
+  - ${PWD}:/gen-ai
+  - ${HOME}/.cache/huggingface:/home/ezdev/.cache/huggingface
+  
+x-deploy-nvidia: &deploy-nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              #device_ids: ['0', '3']
+              capabilities: [gpu]
+
+services:
+  ai:
+    <<: [*deploy-nvidia]  
+    image: ghcr.io/armando-fandango/ezdev/ezdev:0.4-ai-conda-bullseye-slim
+    command: /bin/sh -c "while sleep 1000; do :; done"
+    ports:
+      - "8888"
+    volumes: *data
+    working_dir: /gen-ai
